@@ -1,69 +1,72 @@
 #include "sort.h"
-
 /**
- * hoare_partition - Hoare partition scheme using rightmost index as pivot;
-  * @array: array of integers to be sorted
- * @low: index in source array that begins partition
- * @high: index in source array that ends partition
- * @size: amount of elements in array
- * Return: new index at which to start new recursive partition
- */
-int hoare_partition(int *array, size_t low, size_t high, size_t size)
+*swap - the positions of two elements into an array
+*@array: array
+*@item1: array element
+*@item2: array element
+*/
+void swap(int *array, ssize_t item1, ssize_t item2)
 {
-	int i, j, pivot, temp;
+	int tmp;
 
-	pivot = array[high];
-	i = low - 1;
-	j = high + 1;
-	while (true)
+	tmp = array[item1];
+	array[item1] = array[item2];
+	array[item2] = tmp;
+}
+/**
+ *hoare_partition - hoare partition sorting scheme implementation
+ *@array: array
+ *@first: first array element
+ *@last: last array element
+ *@size: size array
+ *Return: return the position of the last element sorted
+ */
+int hoare_partition(int *array, int first, int last, int size)
+{
+	int current = first - 1, finder = last + 1;
+	int pivot = array[last];
+
+	while (1)
 	{
+
 		do {
-			i++;
-		} while (array[i] < pivot);
+			current++;
+		} while (array[current] < pivot);
 		do {
-			j--;
-		} while (array[j] > pivot);
-		if (i == j)
-			return (j - 1);
-		else if (i > j)
-			return (j);
-		temp = array[i];
-		array[i] = array[j];
-		array[j] = temp;
+			finder--;
+		} while (array[finder] > pivot);
+		if (current >= finder)
+			return (current);
+		swap(array, current, finder);
 		print_array(array, size);
 	}
 }
-
 /**
- * hoare_quicksort - recursively sorts array of integers by separating it into two
- * partitions, using Hoare quick sort
- * @array: array of integers to be sorted
- * @low: index in source array that begins partition
- * @high: index in source array that ends partition
- * @size: amount of elements in array
+ *qs - qucksort algorithm implementation
+ *@array: array
+ *@first: first array element
+ *@last: last array element
+ *@size: array size
  */
-void hoare_quicksort(int *array, size_t low, size_t high, size_t size)
+void qs(int *array, ssize_t first, ssize_t last, int size)
 {
-	size_t border;
+	ssize_t position = 0;
 
-	if (low < high)
+	if (first < last)
 	{
-		border = hoare_partition(array, low, high, size);
-		hoare_quicksort(array, low, border, size);
-		hoare_quicksort(array, border + 1, high, size);
+		position = hoare_partition(array, first, last, size);
+		qs(array, first, position - 1, size);
+		qs(array, position, last, size);
 	}
 }
-
 /**
- * quick_sort_hoare - sorts array of integers in ascending order using a quick
- * sort, Hoare partition scheme alogrithm
- * @array: array of values to be printed
- * @size: number of elements in array
+ *quick_sort_hoare - prepare the terrain to quicksort algorithm
+ *@array: array
+ *@size: array size
  */
 void quick_sort_hoare(int *array, size_t size)
 {
 	if (!array || size < 2)
 		return;
-
-	hoare_quicksort(array, 0, size - 1, size);
+	qs(array, 0, size - 1, size);
 }
